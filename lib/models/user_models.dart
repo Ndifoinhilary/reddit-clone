@@ -54,6 +54,15 @@ class UserModels {
   }
 
   factory UserModels.fromMap(Map<String, dynamic> map) {
+    // Safely handle the awards list
+    var awardsList = map['awards'];
+    List<String> awards = [];
+
+    if (awardsList != null) {
+      // Convert List<dynamic> to List<String>
+      awards = (awardsList as List).map((item) => item.toString()).toList();
+    }
+
     return UserModels(
       name: map['name'] as String,
       profilePic: map['profilePic'] as String,
@@ -61,7 +70,7 @@ class UserModels {
       uid: map['uid'] as String,
       isAuthenticated: map['isAuthenticated'] as bool,
       karma: map['karma'] as double,
-      awards: List<String>.from((map['awards'] as List<String>)),
+      awards: awards,
     );
   }
 

@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:reddit_clone/core/utils.dart';
 import 'package:reddit_clone/features/auth/repository/auth_repository.dart';
+import 'package:reddit_clone/main.dart';
 import 'package:reddit_clone/models/user_models.dart';
 
 final userProvider = StateProvider<UserModels?>((ref) => null);
@@ -38,12 +38,22 @@ class AuthController extends StateNotifier<bool> {
 
   void signInWithGoogle(BuildContext context) async {
     state = true;
-    final user = await _authRepository.signInWithGoogle();
-    state = false;
-    user.fold(
-      (l) => showSnackBar(context, l.message),
-      (r) => _ref.read(userProvider.notifier).update((state) => r),
-    );
+    try {
+      final user = await _authRepository.signInWithGoogle();
+      state = false;
+      user.fold((l) {
+        // Use the global key implementation while keeping the same method signature
+        rootScaffoldMessengerKey.currentState
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(l.message)));
+      }, (r) => _ref.read(userProvider.notifier).update((state) => r));
+    } catch (e) {
+      state = false;
+     
+      rootScaffoldMessengerKey.currentState
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text("Sign in failed: $e")));
+    }
   }
 
   Stream<UserModels> getUserData(String uid) {
