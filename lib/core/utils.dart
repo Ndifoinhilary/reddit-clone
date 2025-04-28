@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit_clone/main.dart'; // Import to access the global key
 
@@ -14,4 +15,9 @@ void showSnackBarGlobal(String text) {
   rootScaffoldMessengerKey.currentState
     ?..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(text)));
+}
+
+Future<FilePickerResult?> pickImage() async {
+  final image = await FilePicker.platform.pickFiles(type: FileType.image);
+  return image;
 }

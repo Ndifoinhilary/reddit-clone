@@ -19,7 +19,6 @@ class Community {
     required this.mods,
   });
 
-
   Community copyWith({
     String? id,
     String? name,
@@ -55,14 +54,15 @@ class Community {
       name: map['name'] as String,
       banner: map['banner'] as String,
       avatar: map['avatar'] as String,
-      members: List<String>.from((map['members'] as List<String>)),
-      mods: List<String>.from((map['mods'] as List<String>)),
+      members: List<String>.from(map['members']), // Remove the incorrect cast
+      mods: List<String>.from(map['mods']), // Remove the incorrect cast
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Community.fromJson(String source) => Community.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Community.fromJson(String source) =>
+      Community.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -72,23 +72,22 @@ class Community {
   @override
   bool operator ==(covariant Community other) {
     if (identical(this, other)) return true;
-  
-    return 
-      other.id == id &&
-      other.name == name &&
-      other.banner == banner &&
-      other.avatar == avatar &&
-      listEquals(other.members, members) &&
-      listEquals(other.mods, mods);
+
+    return other.id == id &&
+        other.name == name &&
+        other.banner == banner &&
+        other.avatar == avatar &&
+        listEquals(other.members, members) &&
+        listEquals(other.mods, mods);
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      name.hashCode ^
-      banner.hashCode ^
-      avatar.hashCode ^
-      members.hashCode ^
-      mods.hashCode;
+        name.hashCode ^
+        banner.hashCode ^
+        avatar.hashCode ^
+        members.hashCode ^
+        mods.hashCode;
   }
 }

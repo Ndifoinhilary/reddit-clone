@@ -47,6 +47,16 @@ class CommunityRepository {
     });
   }
 
+  Stream<Community> getCommunity(String name) {
+    return _community.doc(name).snapshots().map((event) {
+      if (event.exists) {
+        return Community.fromMap(event.data() as Map<String, dynamic>);
+      } else {
+        throw 'Community does not exist';
+      }
+    });
+  }
+
   CollectionReference get _community =>
       _firestore.collection(FirebaseConstants.communitiesCollection);
 }
