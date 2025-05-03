@@ -59,7 +59,7 @@ class CommunityRepository {
 
   CollectionReference get _community =>
       _firestore.collection(FirebaseConstants.communitiesCollection);
-  
+
   FutureVoid editCommunity(Community community) async {
     try {
       return right(_community.doc(community.name).update(community.toMap()));
@@ -68,5 +68,30 @@ class CommunityRepository {
     } catch (e) {
       return left(Failure(e.toString()));
     }
+  }
+
+  Stream<List<Community>> searchCommunities(String query) {
+    return _community
+        .where(
+          'name',
+          isGreaterThanOrEqualTo: query.isEmpty ? 0 : query,
+          isLessThan:
+              query.isEmpty
+                  ? null
+                  : query.substring(0, query.length - 1) +
+                      String.fromCharCode(
+                        query.codeUnitAt(query.length - 1) + 1,
+                      ),
+        )
+        .snapshots()
+        .map((event) {
+          List<Community> communities = [];
+          for (var doc in event.docs) {
+            communities.add(
+              Community.fromMap(doc.data() as Map<String, dynamic>),
+            );
+          }
+          return communities;
+        });
   }
 }
